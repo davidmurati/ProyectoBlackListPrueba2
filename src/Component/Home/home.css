@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0e0d0d; /* Agrega el color de fondo */
+  }
+  
+  header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+  }
+  
+  
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(50vh - 3rem);
+  }
+  
+  h1 {
+    font-size: 3rem;
+    text-align: center;
+  }
+  
+  p {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  button {
+    padding: 1rem;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #0059b3;
+    color: #c5c3c9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0059b3;
+  }
+  
+  .App-logo {
+    height: 100%;
+    width: 100%;
+    
+    margin-right: 1rem;
+    flex: 1; /* Agrega esta línea para que el logo ocupe todo el ancho disponible */
+    display: block; /* Agrega esta línea para que la imagen sea un bloque */
+    margin: 0 auto; /* Agrega esta línea para centrar la imagen horizontalmente */
+  }
+  
+  .logo-container {
+    background-color: #333;
+    color: #fff;
+    
+    
+  
+    margin-top:  5rem; /* Agrega esta línea para añadir un margen superior e inferior */
+    padding: 0.2rem; /* Agrega esta línea para añadir un relleno interno */
+    
+  }
