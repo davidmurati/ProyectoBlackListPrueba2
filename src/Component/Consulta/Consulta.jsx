@@ -17,7 +17,9 @@ function Consulta() {
 
   let [Contador1, setContador1] = useState([]);
   let[emails, setEmails] = useState([]);
-  let[clave, setClave] = useState([]);
+  let[clave, setClave] = useState([]); 
+
+  //xxxxxxxxxxx
   
   let[Plan1, setPlan1] = useState([]);
   let[Contador11, setContador11] = useState([]);
