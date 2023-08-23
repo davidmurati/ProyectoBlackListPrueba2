@@ -19,7 +19,7 @@
   input[type="email"],
   input[type="password"],
   input[type="idinput"],
-  input[type="text"]
+  input[type="text"],
   input[type="date"]  {
     padding: 10px;
     font-size: 16px;

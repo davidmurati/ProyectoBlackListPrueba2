@@ -1,11 +1,10 @@
 import { useState, useEffect  } from 'react'
 import './Soporte.css';
 import logo1 from '../Login/logo1.jpg';
+import logo2 from './logoservicio.jpg';
 
 import { useParams} from 'react-router'
 import { createClient } from '@supabase/supabase-js'
-
-//import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 
 
 
@@ -30,7 +29,7 @@ const supabase = createClient(import.meta.env.VITE_APP_SUPABASE_URL1,
 
 
 const PostGoogleSheet = () => {
-    fetch("https://sheetdb.io/api/v1/rmwydxwdvfk0m", {
+    fetch("https://sheetdb.io/api/v1/0hteizp6h4e7q", {
   method: "POST",
   mode: "cors",
   headers: {
@@ -66,21 +65,24 @@ const PostGoogleSheet = () => {
     // Sort results by id in descending order, take two
     // and return the age as an integer.
 
-    fetch("https://sheetdb.io/api/v1/rmwydxwdvfk0m")
+    fetch("https://sheetdb.io/api/v1/0hteizp6h4e7q")
       .then((response) => response.json())
       .then((data) => {
         // Construir una cadena de texto con los valores de la hoja de cálculo
-         const text = data.map(row => ` Cliente: ${row.Cliente}, Estado: ${row.Estado}`).join('\n');
+         const text = data.map(row => ` Cliente: ${row.Cliente}, Estado: ${row.Estado}, Fecha: ${row.Fecha}`).join('\n');
          
          
 
          const text2 = data.map(({ Cliente }) => Cliente)
          const text3 = data.map(({ Estado }) => Estado)
+         const text4 = data.map(({ Fecha }) => Fecha)
+         
 
          for (let i = 0; i < text2.length; i++) {
             if (email+".com" === text2[i]) {
-                setEstado(text3[i])
-              break;
+                setEstado("Ultima cita "+ text3[i])
+                alert(text3[i]+" para la fecha "+ text4[i])
+              //break;
             } else {
                 setEstado("No se encontro cita")
             }
@@ -108,7 +110,7 @@ const PostGoogleSheet = () => {
     
     try {
         
-        //window.location.href = '/Plan/'+ (variable);
+      alert('Enviado');
 
     } catch (error) {
         console.error(error);
@@ -139,7 +141,7 @@ const PostGoogleSheet = () => {
     <form onSubmit={handleSubmit}>
     
     <div className="logo-container">
-        <img src={logo1} className="App-logo" alt="logo" />
+        <img src={logo2} className="App-logo" alt="logo" />
         </div>
 
     <div className="contenido">

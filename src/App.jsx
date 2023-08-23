@@ -36,7 +36,7 @@ function App() {
           <Soporte />
           <Header />
         </Route>
-        <Route exact path="/Pago/:Plan1">
+        <Route exact path="/Pago/:email">
           <Pago />
           <Header />
         </Route>

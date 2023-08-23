@@ -1,7 +1,10 @@
 import { useState, useEffect  } from 'react'
 import './Login.css';
 import logo1 from './logo1.jpg';
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
+
+  
+    
 
 
 
@@ -10,60 +13,78 @@ function Login() {
   const [password, setPassword] = useState('');
 
 
-  const [data, setData] = useState([]);
   let[emails, setEmails] = useState([]);
   let[clave, setClave] = useState([]);
   let[Plan, setPlan] = useState([]);
   
-  let Plan1=""
+ 
 
+  const [CorreoD, setCorreoD] = useState([]);
   
 
-  const readGoogleSheet = () => {
-    // Sort results by id in descending order, take two
-    // and return the age as an integer.
 
-    fetch("https://sheetdb.io/api/v1/gy8uclmbwbqj8")
-      .then((response) => response.json())
-      .then((data) => {
-        // Construir una cadena de texto con los valores de la hoja de cálculo
-         //const text = data.map(row => `ID: ${row.Id}, Usuario: ${row.Usuario}, Correo: ${row.Correo}`).join('\n');
-         //setData(text);
+//..................................
+const supabase = createClient(import.meta.env.VITE_APP_SUPABASE_URL, 
+  import.meta.env.VITE_APP_SUPABASE_ANON_KEY);
 
-         emails = data.map(row => row.Usuario)
+  async function getCorreoD() { 
 
+    const { data, error } = await supabase
+    .from('Usuarios2')
+    .select('Correo')
 
-        //const emails = data.map(row => `Correo: ${row.Correo}, Clave: ${row.Clave}`)
-        
-        setEmails(emails);
+    setCorreoD (data.map(row => row.Correo))
 
-         clave = data.map(row => row.Clave)
-        setClave(clave);
-
-        Plan = data.map(row => row.Plan)
-        setPlan(Plan);
+    //alert(CorreoD)
 
 
-      });
-  };
+}
+
+async function getPlan() { 
+
+  const { data, error } = await supabase
+  .from('Usuarios2')
+  .select('Plan')
+
+  setPlan(data.map(row => row.Plan))
+
+
+}
+
+async function getClave() { 
+
+  const { data, error } = await supabase
+  .from('Usuarios2')
+  .select('Clave')
+
+  setClave(data.map(row => row.Clave))
+
+  //alert(clave[1])
+
+}
+
+
+//.................................
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    
     const correoConvertido=email
    const variable = correoConvertido.replace(/.com/g, '');
 
     let validCredentials1 = false;
     
-    for (let i = 0; i < emails.length; i++) {
+    for (let i = 0; i < CorreoD.length; i++) {
       
-      if (email === emails[i] && password === clave[i]) {
+      if (email === CorreoD[i] && password === clave[i]) {
         validCredentials1 = true;
-        Plan1= Plan[i];
+        
         break;
         
       }
-    
+      
       // Almacenar el valor de email en el contexto
     
     }
@@ -80,7 +101,10 @@ function Login() {
   };
 
   useEffect(() => {
-    readGoogleSheet();
+
+    getCorreoD();
+    getPlan();
+    getClave();
      
   }, []);
 

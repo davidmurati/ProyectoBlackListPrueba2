@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './Consulta.css';
 import logo1 from '../Login/logo1.jpg';
+import logo2 from './logoconsulta.jpg';
 import { createClient } from '@supabase/supabase-js'
 
 import { useParams} from 'react-router'
@@ -8,16 +9,8 @@ import { useParams} from 'react-router'
 
 function Consulta() {
   const [textoC, setTextoC] = useState('');
-  const [option, setOption] = useState('');
-  const [tarea, setTarea] = useState([]);
-  const [busqueda, setBusqueda] = useState([]);
-  let [Plan, setPlan] = useState([]);
-  const [ContadorPlan, setContadorPlan] = useState("");
-  const [CorreoD, setCorreoD] = useState([]);
+  const [CorreoND, setCorreoND] = useState([]);
 
-  let [Contador1, setContador1] = useState([]);
-  let[emails, setEmails] = useState([]);
-  let[clave, setClave] = useState([]); 
 
   //xxxxxxxxxxx
   
@@ -25,6 +18,10 @@ function Consulta() {
   let[Contador11, setContador11] = useState([]);
 
   let n=0;
+
+  const [CorreoD, setCorreoD] = useState([]);
+  let [Plan, setPlan] = useState([]);
+  const [contador, setContador] = useState([]);
 
 
   //let Contador11="";
@@ -41,83 +38,91 @@ function Consulta() {
   const supabase = createClient(import.meta.env.VITE_APP_SUPABASE_URL, 
                                 import.meta.env.VITE_APP_SUPABASE_ANON_KEY);
 
-// capturar el conteo y el plan del usuario
 
-//lectura de datos get para leer plan y usuario
+  //.............get
 
-const readGoogleSheet = () => {
-  // Sort results by id in descending order, take two
-  // and return the age as an integer.
+  async function getCorreoD() { 
 
-  fetch("https://sheetdb.io/api/v1/0hteizp6h4e7q")
-    .then((response) => response.json())
-    .then((data) => {
-      // Construir una cadena de texto con los valores de la hoja de cálculo
-       //const text = data.map(row => `ID: ${row.Id}, Usuario: ${row.Usuario}, Correo: ${row.Correo}`).join('\n');
-       //setData(text);
+    const { data, error } = await supabase
+    .from('Usuarios2')
+    .select('Correo')
 
-       emails = data.map(row => row.Usuario)
+    setCorreoD (data.map(row => row.Correo))
 
-
-      //const emails = data.map(row => `Correo: ${row.Correo}, Clave: ${row.Clave}`)
-      
-      setEmails(emails);
-
-      clave = data.map(row => row.Clave)
-      setClave(clave);
-
-      Contador1 = data.map(row => row.Contador)
-      setContador1(Contador1);
-
-
-      Plan = data.map(row => row.Plan)
-      setPlan(Plan);
-
-      
-
-    });
-
-    for (let i = 0; i < emails.length; i++) {
-      
-      if (email+".com" === emails[i]) {
-        //alert("hola david");
-        setContador11(Contador1[i]);
-        setPlan1(Plan[i]);
-        alert(Plan1);
-        break;
-        
-      }
-    
-      // Almacenar el valor de email en el contexto
-    
-    }
-
-
-};
+    //alert(CorreoD)
 
 
 
+}
 
-async function getCorreoD() { 
+async function getPlan() { 
+
+  const { data, error } = await supabase
+  .from('Usuarios2')
+  .select('Plan')
+
+  setPlan(data.map(row => row.Plan))
+
+
+}
+
+async function getContador() { 
+
+  const { data, error } = await supabase
+  .from('Usuarios2')
+  .select('Contador')
+
+  setContador(data.map(row => row.Contador))
+
+}
+
+
+//...............get correo no deseado
+
+async function getCorreoND() { 
 
     const { data, error } = await supabase
     .from('TablaCorreo')
     .select('NoDeseado')
   
-    setCorreoD(Object.values(data));
+    setCorreoND(Object.values(data));
+
+};
+
+//..............................
+
+ function BusquedaPlan() { 
+
+  for (let i = 0; i < CorreoD.length; i++) {
+      
+    if (email+".com" === CorreoD[i]) {
+      //alert("hola david");
+      setContador11(contador[i]);
+      setPlan1(Plan[i]);
+      //alert(Plan1);
+      break;
+      
+    }
+  
+  }
+  alert(Plan1);
 
 };
 
 
 
+
 useEffect( () => { 
 
-    readGoogleSheet();
     getCorreoD();
+    getPlan();
+    getContador()
+    getCorreoND();
+    Consultar();
 
-
-    
 }, []);
+
+//......................................
 
 const Ayuda = (event) => {
     
@@ -126,54 +131,60 @@ const Ayuda = (event) => {
         
         
       } else if (Plan1==="Premium") {
-        alert("soporte");
+        //alert("soporte");
         window.location.href = '/Soporte/'+ (email);
       }  else if (Plan1==="Top") {
-        alert("soporte");
+        //alert("soporte");
         window.location.href = '/Soporte/'+ (email);
       }else {
-        alert("No posee plan");
+        alert("Vuelva a intentar despues de consultar o revise su plan");
       }
     
 
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  //.......................modificar
 
+  async function getModificar() { 
 
-
-
-    Consultar();
-    
+    const { error } = await supabase
+    .from('Usuarios2')
+    .update({ Contador: Contador11-1 })
+    .eq('Correo', email+".com")
 
   };
 
+  //..................................
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    
+    Consultar();
+    
+  };
+
+//.......................................
   
   const Consultar = async (event) => {
     event.preventDefault();
 
 
-    for (let i = 0; i < emails.length; i++) {
+    for (let i = 0; i < CorreoD.length; i++) {
       
-      if (email+".com" === emails[i]) {
+      if (email+".com" === CorreoD[i]) {
         
-        setContador11(Contador1[i]);
+        setContador11(contador[i]);
         setPlan1(Plan[i]);
         //alert(Plan1);
         break;
         
       }
     
-      // Almacenar el valor de email en el contexto
-    
     }
 
-
       
-
-
-// asignar cantidad de consulta segun su condicion
+//asignar cantidad de consulta segun su condicion
 
 if (Plan1==="Free") {
     n=20;
@@ -189,17 +200,17 @@ if (Plan1==="Free") {
      
   }else {
     n=0;
-    alert("No tiene plan asignado revise su registro");
+    alert("Intente de nuevo o revise su registro");
   }
 
   if (Contador11>0) {
     
     // consulta
-    for (let i = 0; i < CorreoD.length; i++) {
-        if (textoC === Object.values(CorreoD[i])[0]) {
+    for (let i = 0; i < CorreoND.length; i++) {
+        if (textoC === Object.values(CorreoND[i])[0]) {
             alert("Correo o dominio NO deseado");
           break;
-        } else if (i === CorreoD.length-1) {
+        } else if (i === CorreoND.length-1) {
             alert("El correo o dominio no esta en la base de datos");
           
         }
@@ -209,11 +220,9 @@ if (Plan1==="Free") {
       setContador11(Contador11-1);
       // incremento del contador y subida a supabase
 
-      ////////////////////////////
-
       let validCredentials1 = false;
     
-    for (let i = 0; i < emails.length; i++) {
+    for (let i = 0; i < CorreoD.length; i++) {
       
       if (email+".com" === email+".com" ) {
         validCredentials1 = true;
@@ -224,34 +233,16 @@ if (Plan1==="Free") {
 
     if (validCredentials1===true ) {
 
-    // Update first row setting the name to "Jack Doe"
-    fetch(`https://sheetdb.io/api/v1/0hteizp6h4e7q/Usuario/${email+".com"}`, {
-    method: "PATCH",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-        Correo: email+".com",
-        Contador: Contador11-1,
-    }),
-  })
-    .then((r) => r.json())
-    .then(console.log)
-    .catch(console.error);
 
-    alert(`Se ha modificado o eliminado el usuario.`);
+    getModificar()
 
-}
+    //alert(`Se ha modificado o eliminado el usuario.`);
+  
+  }
 
-////////////////////////////////////
-
-    
     }else {
       //  alert("No puede buscar mas");
       }
-
-
 
   };
   
@@ -266,7 +257,7 @@ if (Plan1==="Free") {
    
     
     <div className="logo-container">
-        <img src={logo1} className="App-logo" alt="logo" />
+        <img src={logo2} className="App-logo" alt="logo" />
         </div>
 
     <div className="contenido">

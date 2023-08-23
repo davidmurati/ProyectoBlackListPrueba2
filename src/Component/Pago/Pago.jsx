@@ -3,12 +3,16 @@ import { ethers } from "ethers";
 import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
 
-
+import { createClient } from '@supabase/supabase-js'
 import { useParams} from 'react-router'
 
+let cont=0;
+
+let cont2=0;
 
 
 const startPayment = async ({ setError, setTxs, ether, addr }) => {
+  cont2=0;
   try {
     if (!window.ethereum)
       throw new Error("No crypto wallet found. Please install it.");
@@ -24,8 +28,14 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
     console.log({ ether, addr });
     console.log("tx", tx);
     setTxs([tx]);
+
+    //..................................
+
+  cont2=1;
+
   } catch (err) {
     setError(err.message);
+    cont2=0;
   }
 };
 
@@ -36,57 +46,68 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
   let[emails, setEmails] = useState([]);
   let[clave, setClave] = useState([]);
   let[Plan, setPlan] = useState([]);
-  const [email, setEmail] = useState('');
+  
+  const [CorreoD, setCorreoD] = useState([]);
 
   let [valor, setValor] = useState('');
   //let valor=0.002
   let contador="";
+  let Plan1="";
 
   // use destructuracion y paso de parametros que se tiene en el link
-  let {Plan1} = useParams();
+  let {email} = useParams();
   console.log(useParams);
 //
 
-const readGoogleSheet = () => {
-    // Sort results by id in descending order, take two
-    // and return the age as an integer.
+const supabase = createClient(import.meta.env.VITE_APP_SUPABASE_URL, 
+    import.meta.env.VITE_APP_SUPABASE_ANON_KEY);
+    
+    //.............get
+  
+    async function getCorreoD() { 
+  
+      const { data, error } = await supabase
+      .from('Usuarios2')
+      .select('Correo')
+  
+      setCorreoD (data.map(row => row.Correo))
+  
+      //alert(CorreoD)
+  
+  
+  }
+  
+  async function getPlan() { 
+  
+    const { data, error } = await supabase
+    .from('Usuarios2')
+    .select('Plan')
+  
+    setPlan(data.map(row => row.Plan))
+  
+  
+  }
+  
+  
+  
+      //..............
 
-    fetch("https://sheetdb.io/api/v1/gy8uclmbwbqj8")
-      .then((response) => response.json())
-      .then((data) => {
-        // Construir una cadena de texto con los valores de la hoja de cálculo
-         //const text = data.map(row => `ID: ${row.Id}, Usuario: ${row.Usuario}, Correo: ${row.Correo}`).join('\n');
-         //setData(text);
-
-         emails = data.map(row => row.Usuario)
-
-
-        //const emails = data.map(row => `Correo: ${row.Correo}, Clave: ${row.Clave}`)
-        
-        setEmails(emails);
-
-         clave = data.map(row => row.Clave)
-        setClave(clave);
-
-        Plan = data.map(row => row.Plan)
-        setPlan(Plan);
-
-
-      });
-  };
 
   useEffect(() => {
-    readGoogleSheet();
+    getCorreoD();
+    getPlan();
+   
 
     
-     
-  }, []);
-
-
-
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    for (let i = 0; i < CorreoD.length; i++) {
+      
+        if (email+".com" === CorreoD[i]) {
+          
+          Plan1=Plan[i]
+          break;
+          
+        }
+      }
 
 
     if (Plan1==="Top") {
@@ -95,8 +116,36 @@ const readGoogleSheet = () => {
       }else {
         setValor(0.002)
         contador=40;
-        alert(Plan1)
+       // alert(Plan1)
       }
+
+    
+  }, []);
+
+
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    for (let i = 0; i < CorreoD.length; i++) {
+      
+        if (email+".com" === CorreoD[i]) {
+          
+          Plan1=Plan[i]
+          break;
+          
+        }
+      }
+
+
+    if (Plan1==="Top") {
+        setValor(0.004)
+        contador=60;
+      }else {
+        setValor(0.002)
+        contador=40;
+      }
+
 
     const data = new FormData(e.target);
     setError();
@@ -105,98 +154,35 @@ const readGoogleSheet = () => {
       setTxs,
       ether: data.get("ether"),
       addr: data.get("addr")
-    });
-    //pagobueno();
-    try {
-    //    alert("hola mundo");
-
-///////////////////////
-        let validCredentials1 = false;
-    
-    for (let i = 0; i < emails.length; i++) {
+    })
+   
+    if (cont2===1) {
+      getPago()
+     //window.location.href = '/Login' ;
       
-      if (email === emails[i]) {
-        validCredentials1 = true;
-        break;
-        
-      }
+    }else {
+      alert("No se realizo el pago");
     }
-
-    if (validCredentials1===true ) {
-
-    // Update first row setting the name to "Jack Doe"
-    fetch(`https://sheetdb.io/api/v1/gy8uclmbwbqj8/Usuario/${email}`, {
-    method: "PATCH",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-        Correo: email,
-        Plan: useParams,
-        Contador: contador,
-    }),
-  })
-    .then((r) => r.json())
-    .then(console.log)
-    .catch(console.error);
-
-   //alert(`Se ha modificado o eliminado el usuario.`);
-
-} }
-
-////////////////////////////////////
-  catch (error) {
-        alert("No se efectuo el pago ");
-      }
+    //alert(cont2);
+    
   };
 
-  const pagobueno = () => {
+  
+
+     //.......modificar
+
+  async function getPago() { 
+
+    const { error } = await supabase
+    .from('Usuarios2')
+    .update({ Contador: contador })
+    .eq('Correo', email+".com")
+
+  }
+  
+  ;
     
-    if (error==="") {
-     //   alert("hola mundo");
-
-///////////////////////
-        let validCredentials1 = false;
     
-    for (let i = 0; i < emails.length; i++) {
-      
-      if (email === emails[i]) {
-        validCredentials1 = true;
-        break;
-        
-      }
-    }
-
-    if (validCredentials1===true ) {
-
-    // Update first row setting the name to "Jack Doe"
-    fetch(`https://sheetdb.io/api/v1/gy8uclmbwbqj8/Usuario/${email}`, {
-    method: "PATCH",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-        Correo: email,
-        Plan: Plan1,
-        Contador: contador,
-    }),
-  })
-    .then((r) => r.json())
-    .then(console.log)
-    .catch(console.error);
-
-   // alert(`Se ha modificado o eliminado el usuario.`);
-
-}
-
-////////////////////////////////////
-      }else {
-        alert("No se efectuo el pago");
-      }
-
-  };
 
 
 
@@ -205,7 +191,7 @@ const readGoogleSheet = () => {
       <div className="credit-card w-full lg:w-1/2 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
         <main className="mt-4 p-4">
           <h1 className="text-xl font-semibold text-gray-700 text-center">
-            Send ETH payment
+            Realizar Pago
           </h1>
           <div className="">
             <div className="my-3">
@@ -225,21 +211,15 @@ const readGoogleSheet = () => {
               />
             </div>
           </div>
-          <label>
-        Correo electrónico:
-        <input  type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      </label>
-        </main>
-        <footer className="p-4">
           <button
             type="submit"
-            className="btn btn-primary submit-button focus:ring focus:outline-none w-full"
+            className="boton"
           >
             Pago
           </button>
-          <ErrorMessage message={error} />
-          <TxList txs={txs} />
-        </footer>
+          
+        </main>
+
       </div>
     </form>
   );
