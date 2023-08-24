@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 import logo2 from './logoregistro.jpg';
 
 import Select from 'react-select'
+import Option from 'react-select/dist/declarations/src/components/Option';
 
 
 
@@ -109,7 +110,7 @@ async function getClave() {
 
     const { error } = await supabase
     .from('Usuarios2')
-    .update({ Plan: Plan })
+    .update({ Plan: option })
     .eq('Correo', email)
 
   }
