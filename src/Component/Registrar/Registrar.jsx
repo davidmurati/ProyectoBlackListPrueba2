@@ -5,7 +5,6 @@ import { createClient } from '@supabase/supabase-js'
 import logo2 from './logoregistro.jpg';
 
 import Select from 'react-select'
-import Option from 'react-select/dist/declarations/src/components/Option';
 
 
 
@@ -22,8 +21,6 @@ function Registrar() {
   let[clave, setClave] = useState([]);
 
   const [CorreoD, setCorreoD] = useState([]);
-
-  const [Plan1, setPlan1] = useState('');
   
 
   let validCredentials1 = false;
@@ -112,9 +109,8 @@ async function getClave() {
 
     const { error } = await supabase
     .from('Usuarios2')
-    .update({ Plan: Plan1 })
+    .update({ Plan: option })
     .eq('Correo', email)
-    //
 
   }
   
@@ -137,7 +133,6 @@ async function getClave() {
     if (option==="Free") {
       contador=20;
       setPlan("Free")
-      setPlan1("Free")
 
       // Realiza la validación y el registro del usuario aquí
     if (validCredentials1===false) {
@@ -152,7 +147,6 @@ async function getClave() {
     } else if (option==="Premium") {
       contador=0;
       setPlan("Premium")
-      setPlan1("Premium")
 
       if (validCredentials1===false) {
         getInsert();
@@ -171,8 +165,7 @@ async function getClave() {
     }  else if (option==="Top") {
       contador=0;
       setPlan("Top")
-      setPlan1("Top")
-      
+
       if (validCredentials1===false) {
         getInsert();
         
