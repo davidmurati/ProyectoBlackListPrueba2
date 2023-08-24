@@ -112,6 +112,7 @@ async function getClave() {
     .from('Usuarios2')
     .update({ Plan: option })
     .eq('Correo', email)
+    //
 
   }
   
