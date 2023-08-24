@@ -18,7 +18,6 @@ function Registrar() {
   const [Plan, setPlan] = useState('');
 
   const [option, setOption] = useState('');
-  let[emails, setEmails] = useState([]);
   let[clave, setClave] = useState([]);
 
   const [CorreoD, setCorreoD] = useState([]);
@@ -105,6 +104,15 @@ async function getClave() {
     getClave();
      
   }, []);
+
+  async function modificar2() { 
+
+    const { error } = await supabase
+    .from('Usuarios2')
+    .update({ Plan: Plan })
+    .eq('Correo', email)
+
+  }
   
  
 
@@ -113,8 +121,8 @@ async function getClave() {
 
 
  // let validCredentials1 = false;
- for (let i = 0; i < emails.length; i++) {
-  if (email === emails[i]) {
+ for (let i = 0; i < CorreoD.length; i++) {
+  if (email === CorreoD[i]) {
     validCredentials1 = true;
     
     break;
@@ -129,9 +137,10 @@ async function getClave() {
       // Realiza la validación y el registro del usuario aquí
     if (validCredentials1===false) {
       getInsert();
-      
       alert(`Se ha registrado el usuario con ${email} con el correo ${password}.`);
     } else {
+
+      modificar2();
       alert('Usuario ya existente');
     }
       
@@ -144,6 +153,8 @@ async function getClave() {
         
         alert(`Se ha registrado el usuario con ${email} con el correo ${password}.`);
       } else {
+       
+        modificar2();
         alert('Usuario ya existente');
       }
       
@@ -160,6 +171,8 @@ async function getClave() {
         
         alert(`Se ha registrado el usuario con ${email} con el correo ${password}.`);
       } else {
+        
+        modificar2();
         alert('Usuario ya existente');
       }
       
