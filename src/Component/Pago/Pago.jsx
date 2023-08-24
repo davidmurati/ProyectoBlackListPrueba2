@@ -158,6 +158,7 @@ const supabase = createClient(import.meta.env.VITE_APP_SUPABASE_URL,
    
     if (cont2===1) {
       getPago()
+      getPago2()
      //window.location.href = '/Login' ;
       
     }else {
@@ -176,6 +177,15 @@ const supabase = createClient(import.meta.env.VITE_APP_SUPABASE_URL,
     const { error } = await supabase
     .from('Usuarios2')
     .update({ Contador: contador })
+    .eq('Correo', email+".com")
+
+  }
+
+  async function getPago2() { 
+
+    const { error } = await supabase
+    .from('Usuarios2')
+    .update({ Plan: Plan1 })
     .eq('Correo', email+".com")
 
   }
